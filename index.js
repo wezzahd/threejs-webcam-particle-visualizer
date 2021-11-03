@@ -5,7 +5,7 @@ let renderer, scene, camera;
 let webCam;
 let particles;
 
-function init() {  
+function init() {
     // Get window size
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
@@ -222,8 +222,8 @@ void main() {
     vGray = (vColor.x + vColor.y + vColor.z) / 3.0;
 
     // Set vertex size
-    gl_PointSize = size * vGray * 3.0;
-    // gl_PointSize = size;
+  //  gl_PointSize = size * vGray * 3.0;
+    gl_PointSize = size;
 
     // Set vertex position
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
@@ -244,6 +244,6 @@ void main() {
     }
 
     // Set vertex color
-    gl_FragColor = vec4(vColor, gray);
+    gl_FragColor = vec4(vColor, 0.2);
 }
 `;
