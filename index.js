@@ -363,11 +363,11 @@ void main() {
 
     vec3 distortion = curlNoise(vec3(
       position.x + time,
-      position.y,
-      (position.z)));
+      position.y + time,
+      position.z + time));
 
 
-    vec3 finalPosition = position + (vec3(1.)* distortion);
+    vec3 finalPosition = position + (vec3(1.0)* distortion);
 
 
     vec4 mvPosition = modelViewMatrix * vec4(finalPosition,1.0);
