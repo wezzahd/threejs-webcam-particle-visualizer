@@ -6,6 +6,7 @@ let webCam;
 let particles;
 let material;
 let time = 0;
+let img;
 
 function init() {
     // Get window size
@@ -14,10 +15,13 @@ function init() {
 
     // Create webgl renderer
     renderer = new THREE.WebGLRenderer({
+      // preserveDrawingBuffer: true,
         canvas: document.querySelector('#myCanvas'),
     });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(windowWidth, windowHeight);
+// renderer.autoClearColor = false
+
     // renderer.outputEncoding = THREE.GammaEncoding;
 
     // Create scene
@@ -40,7 +44,9 @@ function init() {
 
     // Init webcam & particle
     // getDevices()
-    initWebCam();
+    //initWebCam();
+    initImage();
+    getImageData(img);
 
     // Render loop
     const render = () => {
@@ -53,6 +59,15 @@ function init() {
         requestAnimationFrame(render);
     };
     render();
+}
+
+function initImage(){
+img = document.createElement('img');
+img.src = 'flow_insta.jpg';
+//img.id = 'image';
+img.width = 640;
+img.height = 640;
+createParticles();
 }
 
 // Get videoinput device info
@@ -123,7 +138,8 @@ function getImageData(image){
 
 function createParticles(){
     console.log("createParticles...");
-    const imageData = getImageData(webCam);
+    //const imageData = getImageData(webCam);
+    const imageData = getImageData(img);
 
     const geometry = new THREE.BufferGeometry();
     const vertices_base = [];
@@ -171,7 +187,7 @@ function createParticles(){
         fragmentShader: fragmentSource,
         transparent: true,
         depthWrite: false,
-        blending: THREE.AdditiveBlending
+        // blending: THREE.AdditiveBlending
     });
 
     particles = new THREE.Points(geometry, material);
@@ -181,7 +197,7 @@ function createParticles(){
 function drawParticles(t){
     // Update particle info
     if (particles) {
-        const imageData = getImageData(webCam);
+        const imageData = getImageData(img);
         const length = particles.geometry.attributes.position.count;
         for (let i = 0; i < length; i++) {
             const index = i * 4;
@@ -361,13 +377,15 @@ void main() {
     vColor = color;
     vGray = (vColor.x + vColor.y + vColor.z) / 3.0;
 
+
+
     vec3 distortion = curlNoise(vec3(
       position.x + time,
       position.y + time,
       position.z + time));
 
 
-    vec3 finalPosition = position + (vec3(1.0)* distortion);
+    vec3 finalPosition = position + (vec3(abs(sin(time)))* distortion);
 
 
     vec4 mvPosition = modelViewMatrix * vec4(finalPosition,1.0);
@@ -396,6 +414,6 @@ void main() {
     }
 
     // Set vertex color
-    gl_FragColor = vec4(vColor, 0.2);
+    gl_FragColor = vec4(vColor, 0.5);
 }
 `;
