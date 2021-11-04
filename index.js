@@ -411,11 +411,11 @@ void main() {
     float gray = vGray;
 
     // // Decide whether to draw particle
-    // if(gray > 0.5){
-    //     gray = 0.0;
-    // }else{
-    //     gray = 1.0;
-    // }
+  if(vColor.x <= 0.){
+         gray = 0.0;
+     // }else{
+     //     gray = 1.0;
+     }
 
     // Set vertex color
     gl_FragColor = vec4(vColor, gray);
