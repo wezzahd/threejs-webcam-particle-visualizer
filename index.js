@@ -373,9 +373,7 @@ vec3 curlNoise( vec3 p ){
 
 
 void main() {
-    // To fragmentShader
-    vColor = color;
-    vGray = (vColor.x + vColor.y + vColor.z) / 3.0;
+
 
 
 
@@ -384,8 +382,9 @@ void main() {
       position.y + time,
       position.z + time));
 
+      float timer = abs(sin(time));
 
-    vec3 finalPosition = position + (vec3(abs(sin(time)))* distortion);
+    vec3 finalPosition = position + (vec3(timer)* distortion);
 
 
     vec4 mvPosition = modelViewMatrix * vec4(finalPosition,1.0);
@@ -394,6 +393,11 @@ void main() {
     // Set vertex size
     //gl_PointSize = size * vGray * 3.0;
     gl_PointSize = size;
+
+    // To fragmentShader
+    vColor = color;
+    float vBrightness = (vColor.x + vColor.y + vColor.z) / 3.0;
+    vGray = mix(1.0, 0.1, timer);
 
     // Set vertex position
     gl_Position = projectionMatrix * mvPosition;
@@ -406,14 +410,14 @@ varying float vGray;
 void main() {
     float gray = vGray;
 
-    // Decide whether to draw particle
-    if(gray > 0.5){
-        gray = 0.0;
-    }else{
-        gray = 1.0;
-    }
+    // // Decide whether to draw particle
+    // if(gray > 0.5){
+    //     gray = 0.0;
+    // }else{
+    //     gray = 1.0;
+    // }
 
     // Set vertex color
-    gl_FragColor = vec4(vColor, 0.5);
+    gl_FragColor = vec4(vColor, gray);
 }
 `;
