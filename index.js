@@ -29,6 +29,9 @@ function init() {
     controls.enableDamping = true;
     controls.dampingFactor = 0.2;
     camera.position.set( 0, 20, 0 );
+    camera.position.z = 0.6;
+     camera.position.y = 0.2;
+     camera.rotation.x = -0.45;
     controls.update(); // must be called after any manual changes to the camera's transform
     scene.add(camera);
 
@@ -223,7 +226,7 @@ attribute vec3 color;
 uniform float time;
 uniform float size;
 varying vec3 vColor;
-varying float vGray;
+varying vec3 vGray;
 
 
 vec3 mod289(vec3 x) {
@@ -361,20 +364,20 @@ vec3 curlNoise( vec3 p ){
 void main() {
     // To fragmentShader
     vColor = color;
-    vGray = (vColor.x + vColor.y + vColor.z) / 3.0;
+    //vGray = (vColor.x + vColor.y + vColor.z) / 3.0;
 
-     float amplitude = 0.125;
+     float amplitude = .125;
      float frequency = 4.;
      float PI = 3.14159;
 
-    float distance = length(position);
+    float distance = length(sin(position));
     float y = amplitude*sin(-PI*distance*frequency+time);
 
 
 vec3 distortion = vec3(
 0.,
 y,
-0.
+0
 );
 
 
@@ -390,6 +393,8 @@ y,
     vec4 mvPosition = modelViewMatrix * vec4(finalPosition,1.0);
 
 
+    vGray = vec3(0,abs(y),0);
+
     // Set vertex size
     //gl_PointSize = size * vGray * 3.0;
     gl_PointSize = size;
@@ -401,18 +406,18 @@ y,
 
 const fragmentSource = `
 varying vec3 vColor;
-varying float vGray;
+varying vec3 vGray;
 void main() {
-    float gray = vGray;
+    //float gray = vGray;
 
-    // Decide whether to draw particle
-    if(gray > 0.5){
-        gray = 0.0;
-    }else{
-        gray = 1.0;
-    }
+    // // Decide whether to draw particle
+    // if(gray > 0.5){
+    //     gray = 0.0;
+    // }else{
+    //     gray = 1.0;
+    // }
 
     // Set vertex color
-    gl_FragColor = vec4(vColor,1.);
+    gl_FragColor = vec4(vec3(1.),vGray.y);
 }
 `;
