@@ -289,7 +289,7 @@ void main() {
     //
     // // Set vertex size
     // //gl_PointSize = size * vGray * 3.0;
-    // gl_PointSize = size;
+     //gl_PointSize = 2.0;
 
     // To fragmentShader
     vColor = color;
