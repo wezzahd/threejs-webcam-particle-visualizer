@@ -45,7 +45,7 @@ function init() {
     // Render loop
     const render = () => {
 
-      time += 0.0005;
+      time += 0.05;
 
         drawParticles();
         controls.update();
@@ -356,16 +356,33 @@ vec3 curlNoise( vec3 p ){
 
 
 
+
+
 void main() {
     // To fragmentShader
     vColor = color;
     vGray = (vColor.x + vColor.y + vColor.z) / 3.0;
 
-    vec3 distortion = curlNoise(vec3(
-      position.x + time,
-      position.y + time,
-      position.z + time));
+     float amplitude = 0.125;
+     float frequency = 4.;
+     float PI = 3.14159;
 
+    float distance = length(position);
+    float y = amplitude*sin(-PI*distance*frequency+time);
+
+
+vec3 distortion = vec3(
+0.,
+y,
+0.
+);
+
+
+    // vec3 distortion = curlNoise(vec3(
+    //   position.x + time,
+    //   position.y + time,
+    //   position.z + time));
+    //
 
     vec3 finalPosition = position + (vec3(1.0)* distortion);
 
@@ -396,6 +413,6 @@ void main() {
     }
 
     // Set vertex color
-    gl_FragColor = vec4(vColor, 0.2);
+    gl_FragColor = vec4(vColor,1.);
 }
 `;
