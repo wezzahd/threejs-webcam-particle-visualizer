@@ -14,11 +14,13 @@ function init() {
 
     // Create webgl renderer
     renderer = new THREE.WebGLRenderer({
+    // preserveDrawingBuffer: true,
         canvas: document.querySelector('#myCanvas'),
     });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(windowWidth, windowHeight);
-    // renderer.outputEncoding = THREE.GammaEncoding;
+   renderer.autoClearColor = false
+renderer.outputEncoding = THREE.GammaEncoding;
 
     // Create scene
     scene = new THREE.Scene();
@@ -202,6 +204,7 @@ function drawParticles(t){
         particles.geometry.attributes.position.needsUpdate = true;
         particles.geometry.attributes.color.needsUpdate = true;
         material.uniforms.time.value = time;
+        particles.rotation.y = time * 0.05;
 
     }
 }
@@ -356,7 +359,10 @@ vec3 curlNoise( vec3 p ){
 
 }
 
-
+mat2 rotate2d(float _angle){
+    return mat2(cos(_angle),-sin(_angle),
+                sin(_angle),cos(_angle));
+}
 
 
 
@@ -366,20 +372,20 @@ void main() {
     vColor = color;
     //vGray = (vColor.x + vColor.y + vColor.z) / 3.0;
 
-     float amplitude = .125;
-     float frequency = 4.;
+     float amplitude = 1.0;
+     float frequency = 0.3* sin(time*0.01) * length(sin(position));
      float PI = 3.14159;
 
-    float distance = length(sin(position));
-    float y = amplitude*sin(-PI*distance*frequency+time);
+    float distance = length((position));
+    float y = amplitude*cos(-PI*distance*frequency+(time*.1));
 
+// vec2 rot = rotate2d( sin(time*.1)*PI ) * position.yz;
+//
+ vec2 toCenter = vec2(0.5)-position.xy;
 
-vec3 distortion = vec3(
-0.,
-y,
-0
-);
+// vec3 distortion = vec3(rot,0.) * 1.0 - (length(toCenter));
 
+vec3 distortion = vec3(0.,y,0.) ;
 
     // vec3 distortion = curlNoise(vec3(
     //   position.x + time,
@@ -387,13 +393,15 @@ y,
     //   position.z + time));
     //
 
+
+
     vec3 finalPosition = position + (vec3(1.0)* distortion);
 
 
     vec4 mvPosition = modelViewMatrix * vec4(finalPosition,1.0);
 
 
-    vGray = vec3(0,abs(y),0);
+    vGray = vec3(1);
 
     // Set vertex size
     //gl_PointSize = size * vGray * 3.0;
@@ -418,6 +426,6 @@ void main() {
     // }
 
     // Set vertex color
-    gl_FragColor = vec4(vec3(1.),vGray.y);
+    gl_FragColor = vec4(vColor,0.1);
 }
 `;
